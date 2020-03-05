@@ -28,7 +28,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let query = PFQuery(className:"Posts")
+        let query = PFQuery(className:"Pets")
         query.includeKey("author")
         query.limit = 20
         
@@ -36,6 +36,8 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
             if posts != nil {
                 self.posts = posts!
                 self.tableView.reloadData()
+            } else {
+                print("Error, can't load posts")
             }
         }
     }
@@ -44,14 +46,16 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         return posts.count
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 500
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell") as! PostCell
-        
         let post = posts[indexPath.row]
-        
         let user = post["author"] as! PFUser
-        cell.usernameLabel.text = user.username
         
+        cell.usernameLabel.text = user.username
         cell.captionLabel.text = post["caption"] as? String
         
         let imageFile = post["image"] as! PFFileObject
